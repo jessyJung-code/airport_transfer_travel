@@ -274,9 +274,14 @@ def donut(labels, values, colors, title="", h=280):
         hole=0.52, textfont=dict(size=12),
         hovertemplate="%{label}: %{value} (%{percent})<extra></extra>",
     ))
-    fig.update_layout(**base_layout(title=title, height=h),
-                      legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=LEGEND_C, size=11),
-                                  orientation="v", x=1.0, y=0.5))
+    layout = base_layout(title=title, height=h)
+    # base_layout 안의 legend를 덮어쓰지 않도록 직접 merge
+    layout["legend"] = dict(
+        bgcolor="rgba(0,0,0,0)",
+        font=dict(color=LEGEND_C, size=11),
+        orientation="v", x=1.0, y=0.5,
+    )
+    fig.update_layout(**layout)
     return fig
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -313,9 +318,11 @@ def build_ipa_df(dff):
 # ─────────────────────────────────────────────────────────────────────────────
 # SECTION HEADER
 # ─────────────────────────────────────────────────────────────────────────────
-def sec(icon, text):
-    st.markdown(f'<div class="sec-hdr">{icon}&nbsp; {text}</div>',
-                unsafe_allow_html=True)
+def sec(icon, text, size=".75rem"):
+    st.markdown(
+        f'<div class="sec-hdr" style="font-size:{size};">{icon}&nbsp; {text}</div>',
+        unsafe_allow_html=True,
+    )
 
 # ─────────────────────────────────────────────────────────────────────────────
 # KPI CARD
@@ -341,33 +348,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── 다크/라이트 토글
-    st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
-                unsafe_allow_html=True)
-    col_a, col_b = st.columns([3, 1])
-    with col_a:
-        st.markdown(f"<div style='font-size:.8rem;color:{T2};font-weight:500;'>🌓 테마 설정</div>",
-                    unsafe_allow_html=True)
-    with col_b:
-        pass
-    mode_label = "☀ 라이트" if DK else "🌙 다크"
-    if st.button(mode_label, use_container_width=True, key="theme_btn"):
-        st.session_state.dark_mode = not st.session_state.dark_mode
-        st.rerun()
-
-    st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
-                unsafe_allow_html=True)
-
-    # ── n 표시
-    dff_temp = apply_filters()
-    Nf = len(dff_temp)
-    st.markdown(f"""
-    <div style='font-size:.78rem;color:{T3};text-align:center;margin-bottom:1rem;'>
-      적용된 응답자<br>
-      <b style='font-size:1.4rem;color:{T1};'>{Nf}</b>
-      <span style='color:{T3};'> / 434</span>
-    </div>
-    """, unsafe_allow_html=True)
 
     # ── 필터: 성별 (클릭 토글 버튼)
     st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>성별 (Gender)</div>",
@@ -446,6 +426,19 @@ with st.sidebar:
     st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
                 unsafe_allow_html=True)
 
+    # ── 적용된 응답자 수 (필터 아래)
+    dff_temp = apply_filters()
+    Nf_side = len(dff_temp)
+    st.markdown(f"""
+    <div style='font-size:.78rem;color:{T3};text-align:center;padding:.6rem 0 .3rem;'>
+      적용된 응답자
+      <br>
+      <b style='font-size:1.5rem;color:{T1};'>{Nf_side}</b>
+      <span style='color:{T3};'> / 434</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
     # ── 페이지 네비게이션
     page = st.radio(
         "Navigation",
@@ -467,16 +460,26 @@ Nf  = len(dff)
 # ─────────────────────────────────────────────────────────────────────────────
 # 헤더
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div style='margin-bottom:1.2rem;'>
-  <div class='dash-title'>Free Korea Transit Tour — Survey Dashboard</div>
-  <div class='dash-sub'>
-    Incheon International Airport&nbsp;·&nbsp;
-    현재 응답자 <b style='color:{T1};'>{Nf}</b> / 434&nbsp;·&nbsp;
-    성별 {len(st.session_state.sel_gender)}개 · 연령 {len(st.session_state.sel_age)}개 · 방문 경험 {len(st.session_state.sel_visit)}개 선택됨
-  </div>
-</div>
-""", unsafe_allow_html=True)
+# 헤더 — 타이틀 + 오른쪽 상단 테마 버튼
+_hcol1, _hcol2 = st.columns([6, 1])
+with _hcol1:
+    st.markdown(f"""
+    <div style='margin-bottom:1.2rem;'>
+      <div class='dash-title'>Free Korea Transit Tour — Survey Dashboard</div>
+      <div class='dash-sub'>
+        Incheon International Airport&nbsp;·&nbsp;
+        현재 응답자 <b style='color:{T1};'>{Nf}</b> / 434&nbsp;·&nbsp;
+        성별 {len(st.session_state.sel_gender)}개 · 연령 {len(st.session_state.sel_age)}개 · 방문 경험 {len(st.session_state.sel_visit)}개 선택됨
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+with _hcol2:
+    st.markdown("<div style='padding-top:.35rem;'></div>", unsafe_allow_html=True)
+    _mode_label = '☀ 라이트' if DK else '🌙 다크'
+    if st.button(_mode_label, use_container_width=True, key='theme_btn'):
+        st.session_state.dark_mode = not st.session_state.dark_mode
+        st.rerun()
+
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -484,7 +487,7 @@ st.markdown(f"""
 # ═════════════════════════════════════════════════════════════════════════════
 if page == "📊 KPI Overview":
 
-    sec("⚡", "KEY PERFORMANCE INDICATORS")
+    sec("⚡", "KEY PERFORMANCE INDICATORS", size="1rem")
     c1,c2,c3,c4,c5,c6 = st.columns(6)
 
     overall_sat  = dff["Q34_num"].mean()
