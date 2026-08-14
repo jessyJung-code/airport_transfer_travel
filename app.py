@@ -348,18 +348,48 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    # ── 페이지 네비게이션
+    page = st.radio(
+        "Navigation",
+        ["📊 KPI Overview",
+         "👥 Demographics",
+         "🎯 IPA Analysis",
+         "✈ Airport Competitiveness",
+         "💡 Business Insights",
+         "💬 Open-Ended Feedback"],
+        label_visibility="collapsed",
+    )
 
-    # ── 필터: 성별 (클릭 토글 버튼)
-    st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>성별 (Gender)</div>",
+    st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
                 unsafe_allow_html=True)
 
+    # ── 적용된 응답자 수
     ALL_GENDER = ["Female", "Male", "Prefer not to say"]
+    ALL_AGE    = ["Under 20", "20s", "30s", "40s", "50s", "60+"]
+    ALL_VISIT  = ["First time", "2–3 times", "4+ times"]
+
+    dff_temp = apply_filters()
+    Nf_side  = len(dff_temp)
+    st.markdown(f"""
+    <div style='font-size:.78rem;color:{T3};text-align:center;padding:.4rem 0 .5rem;'>
+      적용된 응답자
+      <br>
+      <b style='font-size:1.5rem;color:{T1};'>{Nf_side}</b>
+      <span style='color:{T3};'> / 434</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
+                unsafe_allow_html=True)
+
+    # ── 필터: 성별
+    st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>성별 (Gender)</div>",
+                unsafe_allow_html=True)
     g_cols = st.columns(len(ALL_GENDER))
     for i, g in enumerate(ALL_GENDER):
         label_map = {"Female": "여성", "Male": "남성", "Prefer not to say": "기타"}
-        selected = g in st.session_state.sel_gender
-        # 선택된 항목은 색이 다른 버튼으로 표현
-        btn_type = "primary" if selected else "secondary"
+        selected  = g in st.session_state.sel_gender
+        btn_type  = "primary" if selected else "secondary"
         if g_cols[i].button(label_map[g], key=f"g_{g}", use_container_width=True, type=btn_type):
             if selected and len(st.session_state.sel_gender) > 1:
                 st.session_state.sel_gender = [x for x in st.session_state.sel_gender if x != g]
@@ -372,12 +402,10 @@ with st.sidebar:
     # ── 필터: 연령대
     st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>연령대 (Age)</div>",
                 unsafe_allow_html=True)
-
-    ALL_AGE = ["Under 20", "20s", "30s", "40s", "50s", "60+"]
     age_row1 = st.columns(3)
     age_row2 = st.columns(3)
     for i, a in enumerate(ALL_AGE):
-        col = age_row1[i] if i < 3 else age_row2[i - 3]
+        col      = age_row1[i] if i < 3 else age_row2[i - 3]
         selected = a in st.session_state.sel_age
         btn_type = "primary" if selected else "secondary"
         if col.button(a, key=f"a_{a}", use_container_width=True, type=btn_type):
@@ -392,10 +420,8 @@ with st.sidebar:
     # ── 필터: 방문 경험
     st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>방문 경험</div>",
                 unsafe_allow_html=True)
-
-    ALL_VISIT = ["First time", "2–3 times", "4+ times"]
-    v_label   = {"First time": "첫 방문", "2–3 times": "2–3회", "4+ times": "4회+"}
-    v_cols = st.columns(3)
+    v_label  = {"First time": "첫 방문", "2–3 times": "2–3회", "4+ times": "4회+"}
+    v_cols   = st.columns(3)
     for i, v in enumerate(ALL_VISIT):
         selected = v in st.session_state.sel_visit
         btn_type = "primary" if selected else "secondary"
@@ -422,34 +448,6 @@ with st.sidebar:
             st.session_state.sel_age    = list(ALL_AGE)
             st.session_state.sel_visit  = list(ALL_VISIT)
             st.rerun()
-
-    st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
-                unsafe_allow_html=True)
-
-    # ── 적용된 응답자 수 (필터 아래)
-    dff_temp = apply_filters()
-    Nf_side = len(dff_temp)
-    st.markdown(f"""
-    <div style='font-size:.78rem;color:{T3};text-align:center;padding:.6rem 0 .3rem;'>
-      적용된 응답자
-      <br>
-      <b style='font-size:1.5rem;color:{T1};'>{Nf_side}</b>
-      <span style='color:{T3};'> / 434</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-
-    # ── 페이지 네비게이션
-    page = st.radio(
-        "Navigation",
-        ["📊 KPI Overview",
-         "👥 Demographics",
-         "🎯 IPA Analysis",
-         "✈ Airport Competitiveness",
-         "💡 Business Insights",
-         "💬 Open-Ended Feedback"],
-        label_visibility="collapsed",
-    )
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 필터 적용
