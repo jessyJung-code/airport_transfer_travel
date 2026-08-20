@@ -227,13 +227,15 @@ def pct(series, val):
 # PLOTLY DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
 def base_layout(**kw):
-    return dict(
+    layout = dict(
         paper_bgcolor=PLOT_PAPER, plot_bgcolor=PLOT_BG,
         font=dict(family="Inter", color=T2, size=12),
         margin=dict(l=40, r=20, t=36, b=40),
-        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=LEGEND_C, size=11)),
-        **kw,
     )
+    if "legend" not in kw:
+        layout["legend"] = dict(bgcolor="rgba(0,0,0,0)", font=dict(color=LEGEND_C, size=11))
+    layout.update(kw)
+    return layout
 
 def axis(title="", fmt=None, **kw):
     a = dict(gridcolor=GRID_C, zerolinecolor=GRID_C,
