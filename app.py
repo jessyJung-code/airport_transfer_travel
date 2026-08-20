@@ -80,24 +80,29 @@ section[data-testid="stSidebar"]{{background:{BG1} !important;border-right:1px s
 #MainMenu,footer,header{{visibility:hidden;}}
 
 /* ── 헤더 제목 글씨 색상 ── */
-.dash-title{{font-size:1.5rem;font-weight:700;color:{TITLE_CSS_CLR};letter-spacing:-.02em;margin:0;line-height:1.2;}}
+.dash-title{{font-size:1.1rem;font-weight:500;color:{TITLE_CSS_CLR};letter-spacing:-.01em;margin:0;line-height:1.2;}}
 .dash-sub{{font-size:.82rem;color:{T3};margin-top:.2rem;}}
 
 /* ── KPI 카드 ── */
 .kpi-card{{
-    background:{BG1};border:1px solid {BORDER};border-radius:14px;
-    padding:1.1rem 1rem;text-align:center;
+    background:{BG1};border:.5px solid {BORDER};border-radius:12px;
+    padding:.85rem .75rem;text-align:center;border-top:2.5px solid transparent;
 }}
-.kpi-card::before{{content:'';display:block;height:3px;border-radius:14px 14px 0 0;
-    margin:-1.1rem -1rem .9rem;}}
+.kpi-card.blue  {{border-top-color:#3b82f6;}}
+.kpi-card.teal  {{border-top-color:#10b981;}}
+.kpi-card.purple{{border-top-color:#8b5cf6;}}
+.kpi-card.coral {{border-top-color:#f97316;}}
+.kpi-card.amber {{border-top-color:#f59e0b;}}
+.kpi-card.green {{border-top-color:#10b981;}}
+.kpi-card::before{{display:none;}}
 .kpi-card.blue::before  {{background:#3b82f6;}}
 .kpi-card.teal::before  {{background:#10b981;}}
 .kpi-card.purple::before{{background:#8b5cf6;}}
 .kpi-card.coral::before {{background:#f97316;}}
 .kpi-card.amber::before {{background:#f59e0b;}}
 .kpi-card.green::before {{background:#10b981;}}
-.kpi-label{{font-size:.7rem;font-weight:600;color:{T3};text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem;}}
-.kpi-value{{font-size:1.9rem;font-weight:800;line-height:1;margin-bottom:.2rem;}}
+.kpi-label{{font-size:.68rem;font-weight:500;color:{T3};text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;}}
+.kpi-value{{font-size:1.5rem;font-weight:500;line-height:1;margin-bottom:.2rem;}}
 .kpi-unit {{font-size:.72rem;color:{T3};}}
 .kpi-card.blue   .kpi-value{{color:#60a5fa;}}
 .kpi-card.teal   .kpi-value{{color:#34d399;}}
@@ -108,9 +113,9 @@ section[data-testid="stSidebar"]{{background:{BG1} !important;border-right:1px s
 
 /* ── 섹션 헤더 ── */
 .sec-hdr{{
-    font-size:.75rem;font-weight:700;color:{ACCENT};
-    text-transform:uppercase;letter-spacing:.1em;
-    border-bottom:2px solid {BORDER};padding-bottom:.4rem;margin:1.8rem 0 .9rem;
+    font-size:.75rem;font-weight:500;color:{ACCENT};
+    text-transform:uppercase;letter-spacing:.09em;
+    border-bottom:.5px solid {BORDER};padding-bottom:5px;margin:1.4rem 0 .85rem;
 }}
 
 /* ── 필터 토글 버튼 ── */
@@ -341,14 +346,15 @@ def kpi_card(label, value, unit, cls):
 with st.sidebar:
     # ── 로고 + 제목
     st.markdown(f"""
-    <div style='text-align:center;padding:1rem 0 .5rem;'>
-      <div style='font-size:2rem;'>✈</div>
-      <div style='font-size:1rem;font-weight:700;color:{T1};'>Transit Tour</div>
-      <div style='font-size:.75rem;color:{T3};'>Survey Dashboard</div>
+    <div style='text-align:center;padding:1.1rem .75rem .7rem;border-bottom:.5px solid {BORDER};'>
+      <div style='font-size:1.6rem;margin-bottom:4px;'>✈</div>
+      <div style='font-size:.88rem;font-weight:500;color:{T1};'>Transit Tour</div>
+      <div style='font-size:.72rem;color:{T3};'>Survey Dashboard</div>
     </div>
     """, unsafe_allow_html=True)
 
     # ── 페이지 네비게이션
+    st.markdown("<div style='height:.3rem;'></div>", unsafe_allow_html=True)
     page = st.radio(
         "Navigation",
         ["📊 KPI Overview",
@@ -359,6 +365,7 @@ with st.sidebar:
          "💬 Open-Ended Feedback"],
         label_visibility="collapsed",
     )
+    st.markdown("<div style='height:.3rem;'></div>", unsafe_allow_html=True)
 
     st.markdown("<hr style='border-color:" + BORDER + ";margin:.8rem 0;'>",
                 unsafe_allow_html=True)
@@ -371,11 +378,10 @@ with st.sidebar:
     dff_temp = apply_filters()
     Nf_side  = len(dff_temp)
     st.markdown(f"""
-    <div style='font-size:.78rem;color:{T3};text-align:center;padding:.4rem 0 .5rem;'>
-      적용된 응답자
-      <br>
-      <b style='font-size:1.5rem;color:{T1};'>{Nf_side}</b>
-      <span style='color:{T3};'> / 434</span>
+    <div style='text-align:center;padding:.5rem .75rem .4rem;'>
+      <div style='font-size:.68rem;color:{T3};text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;'>적용된 응답자</div>
+      <div style='font-size:1.5rem;font-weight:500;color:{T1};line-height:1.2;'>{Nf_side}</div>
+      <div style='font-size:.72rem;color:{T3};'>/ 434명</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -383,7 +389,7 @@ with st.sidebar:
                 unsafe_allow_html=True)
 
     # ── 필터: 성별
-    st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>성별 (Gender)</div>",
+    st.markdown(f"<div style='font-size:.68rem;font-weight:500;color:{T3};text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;'>성별 (Gender)</div>",
                 unsafe_allow_html=True)
     g_cols = st.columns(len(ALL_GENDER))
     for i, g in enumerate(ALL_GENDER):
@@ -400,7 +406,7 @@ with st.sidebar:
     st.markdown("<div style='height:.5rem;'></div>", unsafe_allow_html=True)
 
     # ── 필터: 연령대
-    st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>연령대 (Age)</div>",
+    st.markdown(f"<div style='font-size:.68rem;font-weight:500;color:{T3};text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;'>연령대 (Age)</div>",
                 unsafe_allow_html=True)
     age_row1 = st.columns(3)
     age_row2 = st.columns(3)
@@ -418,7 +424,7 @@ with st.sidebar:
     st.markdown("<div style='height:.5rem;'></div>", unsafe_allow_html=True)
 
     # ── 필터: 방문 경험
-    st.markdown(f"<div class='filter-hdr' style='color:{T3};font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;'>방문 경험</div>",
+    st.markdown(f"<div style='font-size:.68rem;font-weight:500;color:{T3};text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;'>방문 경험</div>",
                 unsafe_allow_html=True)
     v_label  = {"First time": "첫 방문", "2–3 times": "2–3회", "4+ times": "4회+"}
     v_cols   = st.columns(3)
@@ -466,8 +472,8 @@ with _hcol1:
       <div class='dash-title'>Free Korea Transit Tour — Survey Dashboard</div>
       <div class='dash-sub'>
         Incheon International Airport&nbsp;·&nbsp;
-        현재 응답자 <b style='color:{T1};'>{Nf}</b> / 434&nbsp;·&nbsp;
-        성별 {len(st.session_state.sel_gender)}개 · 연령 {len(st.session_state.sel_age)}개 · 방문 경험 {len(st.session_state.sel_visit)}개 선택됨
+        n = <b style='color:{T1};'>{Nf}</b> / 434&nbsp;·&nbsp;
+        필터: 성별 {len(st.session_state.sel_gender)}개 · 연령 {len(st.session_state.sel_age)}개 · 방문경험 {len(st.session_state.sel_visit)}개
       </div>
     </div>
     """, unsafe_allow_html=True)
